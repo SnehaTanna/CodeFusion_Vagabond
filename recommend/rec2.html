@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recommendation System for Maharashtra</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f2f2f2;
+        }
+
+        header {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        form {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        select {
+            padding: 8px;
+            border-radius: 5px;
+            margin: 0 10px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #recommendations {
+            margin-top: 20px;
+            padding: 0 20px;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            margin-bottom: 10px;
+            background-color: #fff;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        li:hover {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Recommendation System for Maharashtra</h1>
+    </header>
+    <form id="preferences-form">
+        <label for="preference">Select your preference:</label>
+        <select id="preference" name="preference">
+            <option value="restaurant">Restaurants</option>
+            <option value="hotel">Hotels</option>
+            <option value="tourist_attraction">Tourist Attractions</option>
+            <option value="park">Parks</option>
+            <option value="museum">Museums</option>
+            <!-- Add more options as needed -->
+        </select>
+        <button type="button" onclick="fetchRecommendations()">Get Recommendations</button>
+    </form>
+
+    <div id="recommendations">
+        <!-- Recommendations will be displayed here -->
+    </div>
+
+    <script>
+        function fetchRecommendations() {
+            var preference = document.getElementById("preference").value;
+            var url = "proxy.php?preference=" + preference;
+    
+            fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                displayRecommendations(data.results);
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    
+        function displayRecommendations(recommendations) {
+            var recommendationsDiv = document.getElementById("recommendations");
+            recommendationsDiv.innerHTML = ""; // Clear previous recommendations
+            if (recommendations.length > 0) {
+                var ul = document.createElement("ul");
+                recommendations.forEach(function(place) {
+                    var li = document.createElement("li");
+                    var link = document.createElement("a");
+                    link.textContent = place.name + " - " + place.vicinity;
+                    link.href = "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(place.name + " " + place.vicinity);
+                    link.target = "_blank"; // Open link in a new tab
+                    li.appendChild(link);
+                    ul.appendChild(li);
+                });
+                recommendationsDiv.appendChild(ul);
+            } else {
+                recommendationsDiv.textContent = "No recommendations found.";
+            }
+        }
+    </script>
+    
+</body>
+</html>

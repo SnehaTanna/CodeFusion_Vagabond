@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CrowdTravel: Maharashtra Recommendations</title>
+<script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places"></script>
+</head>
+<body>
+<h1>CrowdTravel: Maharashtra Recommendations</h1>
+<label for="days">Number of Days:</label>
+<input type="number" id="days" min="1" max="10" value="5"><br><br>
+<label for="interests">Interests:</label>
+<input type="text" id="interests" placeholder="e.g., adventure, culture"><br><br>
+<button onclick="getRecommendations()">Get Recommendations</button><br><br>
+<div id="recommendations"></div>
+
+<script>
+// Function to fetch recommendations based on user input
+function getRecommendations() {
+    var days = document.getElementById('days').value;
+    var interests = document.getElementById('interests').value;
+    
+    // Set up the request to the Google Places API
+    var request = {
+        query: 'tourist attractions in Maharashtra',
+        fields: ['name', 'formatted_address', 'rating', 'photos'],
+        locationBias: { radius: '500', center: { lat: 19.7515, lng: 75.7139 } }, // Coordinates for Maharashtra
+    };
+
+    // Send the request to the Places API
+    var placesService = new google.maps.places.PlacesService(document.createElement('div'));
+    placesService.findPlaceFromQuery(request, function(results, status) {
+        if (status === google.maps.places.PlacesServiceStatus.OK) {
+            var recommendations = '';
+            for (var i = 0; i < results.length; i++) {
+                recommendations += '<p>' + (i+1) + '. ' + results[i].name + '</p>';
+                recommendations += '<p>Address: ' + results[i].formatted_address + '</p>';
+                recommendations += '<p>Rating: ' + results[i].rating + '</p>';
+                if (results[i].photos && results[i].photos[0]) {
+                    recommendations += '<img src="' + results[i].photos[0].getUrl({ maxWidth: 300 }) + '"><br><br>';
+                }
+            }
+            document.getElementById('recommendations').innerHTML = recommendations;
+        } else {
+            document.getElementById('recommendations').innerHTML = 'No recommendations found.';
+        }
+    });
+}
+</script>
+</body>
+</html>
